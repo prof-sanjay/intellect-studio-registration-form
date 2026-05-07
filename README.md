@@ -1,0 +1,1 @@
+# intellect-studio-registration-form

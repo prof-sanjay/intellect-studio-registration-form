@@ -1,0 +1,118 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-syne: 'Syne', sans-serif;
+    --font-dm-sans: 'DM Sans', sans-serif;
+    --font-space-mono: 'Space Mono', monospace;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: #F5F4EF;
+    color: #0C0C0A;
+    font-family: var(--font-dm-sans);
+  }
+
+  ::selection {
+    background: #0C0C0A;
+    color: #F5F4EF;
+  }
+
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #F5F4EF;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #9A9A90;
+    border-radius: 2px;
+  }
+}
+
+@layer components {
+  .label-upper {
+    @apply block text-[11px] font-semibold tracking-[0.12em] uppercase text-ink-2 mb-2;
+  }
+
+  .input-base {
+    @apply w-full px-4 py-3 bg-white border border-border text-ink text-sm
+           outline-none transition-all duration-200 placeholder:text-ink-3
+           focus:border-ink focus:shadow-[0_0_0_3px_rgba(12,12,10,0.06)]
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .input-error {
+    @apply border-error focus:border-error focus:shadow-[0_0_0_3px_rgba(139,26,26,0.06)];
+  }
+
+  .btn-primary {
+    @apply bg-ink text-white px-6 py-3 text-sm font-syne font-semibold tracking-wide
+           hover:bg-ink/90 active:scale-[0.98] transition-all duration-150
+           disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100;
+  }
+
+  .btn-secondary {
+    @apply bg-transparent text-ink px-6 py-3 text-sm font-syne font-semibold tracking-wide
+           border border-border hover:border-ink active:scale-[0.98] transition-all duration-150;
+  }
+
+  .error-text {
+    @apply text-[11px] text-error mt-1.5 font-sans;
+  }
+
+  .card {
+    @apply bg-white border border-border;
+  }
+}
+
+/* Noise texture overlay */
+.noise-overlay::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 100;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+}
+
+/* ID card shimmer animation */
+.id-card-shimmer {
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.08) 50%,
+    transparent 60%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+/* Stagger fade-up */
+.stagger > * {
+  opacity: 0;
+  transform: translateY(12px);
+  animation: fade-up 0.5s ease-out forwards;
+}
+.stagger > *:nth-child(1) { animation-delay: 0.05s; }
+.stagger > *:nth-child(2) { animation-delay: 0.12s; }
+.stagger > *:nth-child(3) { animation-delay: 0.19s; }
+.stagger > *:nth-child(4) { animation-delay: 0.26s; }
+.stagger > *:nth-child(5) { animation-delay: 0.33s; }
+.stagger > *:nth-child(6) { animation-delay: 0.40s; }
