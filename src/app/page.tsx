@@ -128,7 +128,7 @@ export default function Home() {
       </div>
 
       {/* ── About ──────────────────────────────────────────────────────────── */}
-      <section id="about" className="py-28 border-b border-border overflow-hidden">
+      <section id="about" className="py-28 border-b border-border overflow-hidden" style={{ backgroundColor: '#EAE8E0' }}>
         <div className="max-w-7xl mx-auto px-6 md:px-10">
           <motion.div
             initial="hidden"
@@ -204,7 +204,7 @@ export default function Home() {
       </section>
 
       {/* ── Internship Benefits ────────────────────────────────────────────── */}
-      <section className="bg-ink py-24 overflow-hidden">
+      <section className="py-24 overflow-hidden" style={{ backgroundColor: '#e5e7eb' }}>
         <div className="max-w-7xl mx-auto px-6 md:px-10">
           <motion.div
             initial="hidden"
@@ -214,48 +214,48 @@ export default function Home() {
           >
             <motion.div variants={item} className="mb-16 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
               <div>
-                <p className="font-mono text-[10px] tracking-[0.3em] uppercase text-white/30 mb-4">
+                <p className="font-mono text-[10px] tracking-[0.3em] uppercase text-ink-3 mb-4">
                   Why Join Us
                 </p>
-                <h2 className="font-syne font-black text-4xl md:text-6xl text-white leading-[0.92] tracking-tight">
+                <h2 className="font-syne font-black text-4xl md:text-6xl text-ink leading-[0.92] tracking-tight">
                   What you
                   <br />
-                  <span className="text-white/30">get.</span>
+                  <span className="text-ink-3">get.</span>
                 </h2>
               </div>
               <Link href="/register" className="shrink-0">
-                <button className="border border-white/20 text-white text-xs font-syne font-semibold tracking-widest uppercase px-6 py-3 hover:border-white/50 hover:bg-white/5 transition-all duration-200">
+                <button className="border border-ink/20 text-ink text-xs font-syne font-semibold tracking-widest uppercase px-6 py-3 hover:border-ink/50 hover:bg-ink/5 transition-all duration-200">
                   Apply Now →
                 </button>
               </Link>
             </motion.div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-white/10 border border-white/10">
+            <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-ink/10 border border-ink/10">
               {internBenefits.map((b) => (
                 <motion.div
                   key={b.index}
                   variants={item}
-                  className="relative p-8 md:p-10 group hover:bg-white/[0.03] transition-colors duration-300 overflow-hidden"
+                  className="relative p-8 md:p-10 group hover:bg-ink/[0.03] transition-colors duration-300 overflow-hidden"
                 >
                   {/* Ghost number */}
-                  <span className="absolute -bottom-4 -right-2 font-syne font-black text-[9rem] leading-none text-white/[0.03] select-none pointer-events-none">
+                  <span className="absolute -bottom-4 -right-2 font-syne font-black text-[9rem] leading-none text-ink/[0.04] select-none pointer-events-none">
                     {b.index}
                   </span>
 
-                  <p className="font-mono text-[10px] tracking-[0.25em] uppercase text-white/25 mb-8">
+                  <p className="font-mono text-[10px] tracking-[0.25em] uppercase text-ink-3 mb-8">
                     {b.index} · {b.label}
                   </p>
 
-                  <p className="font-syne font-black text-3xl md:text-4xl text-white leading-tight mb-2">
+                  <p className="font-syne font-black text-3xl md:text-4xl text-ink leading-tight mb-2">
                     {b.highlight}
                   </p>
-                  <p className="font-mono text-[10px] tracking-widest uppercase text-white/30 mb-5">
+                  <p className="font-mono text-[10px] tracking-widest uppercase text-ink-3 mb-5">
                     {b.sub}
                   </p>
 
-                  <div className="w-8 h-px bg-white/20 mb-5" />
+                  <div className="w-8 h-px bg-ink/20 mb-5" />
 
-                  <p className="text-sm text-white/45 font-sans leading-relaxed">
+                  <p className="text-sm text-ink-2 font-sans leading-relaxed">
                     {b.desc}
                   </p>
                 </motion.div>
@@ -266,30 +266,33 @@ export default function Home() {
       </section>
 
       {/* ── Portal Features grid ───────────────────────────────────────────── */}
-      <section className="py-24 px-6 md:px-10 max-w-7xl mx-auto">
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-80px' }}
-          variants={stagger}
-        >
-          <motion.p variants={item} className="font-mono text-[10px] tracking-[0.3em] uppercase text-ink-3 mb-12">
-            How the portal works
-          </motion.p>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-border">
-            {portalFeatures.map((f) => (
-              <motion.div
-                key={f.num}
-                variants={item}
-                className="bg-bg p-8 flex flex-col gap-4 group hover:bg-white transition-colors duration-300"
-              >
-                <span className="font-mono text-[10px] tracking-widest text-ink-3">{f.num}</span>
-                <h3 className="font-syne font-bold text-base text-ink">{f.title}</h3>
-                <p className="text-xs text-ink-2 leading-relaxed font-sans">{f.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
+      <section className="py-24" style={{ backgroundColor: '#EAE8E0' }}>
+        <div className="max-w-7xl mx-auto px-6 md:px-10">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-80px' }}
+            variants={stagger}
+          >
+            <motion.p variants={item} className="font-mono text-[10px] tracking-[0.3em] uppercase text-ink-3 mb-12">
+              How the portal works
+            </motion.p>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-border">
+              {portalFeatures.map((f) => (
+                <motion.div
+                  key={f.num}
+                  variants={item}
+                  className="p-8 flex flex-col gap-4 group hover:bg-white transition-colors duration-300"
+                  style={{ backgroundColor: '#EAE8E0' }}
+                >
+                  <span className="font-mono text-[10px] tracking-widest text-ink-3">{f.num}</span>
+                  <h3 className="font-syne font-bold text-base text-ink">{f.title}</h3>
+                  <p className="text-xs text-ink-2 leading-relaxed font-sans">{f.desc}</p>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
       </section>
 
       {/* ── Stats ──────────────────────────────────────────────────────────── */}
