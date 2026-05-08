@@ -5,6 +5,45 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import IDCard from '@/components/IDCard';
 
+function IDCardSkeleton() {
+  return (
+    <div className="max-w-lg mx-auto animate-pulse">
+      <div className="text-center mb-10">
+        <div className="w-12 h-12 bg-border mx-auto mb-4" />
+        <div className="h-2.5 w-32 bg-border mx-auto mb-3" />
+        <div className="h-8 w-56 bg-border mx-auto mb-2" />
+        <div className="h-4 w-44 bg-border mx-auto" />
+      </div>
+
+      <div className="flex flex-col items-center gap-8">
+        <div className="w-full max-w-sm bg-ink/10" style={{ aspectRatio: '85.6/54' }} />
+
+        <div className="h-11 w-44 bg-border" />
+
+        <div className="w-full max-w-sm card p-6">
+          <div className="h-2.5 w-36 bg-border mb-5" />
+          {[1, 2, 3, 4, 5, 6, 7].map((i) => (
+            <div key={i} className="flex justify-between items-center py-3 border-b border-border last:border-0">
+              <div className="h-2.5 w-24 bg-border" />
+              <div className="h-3 w-28 bg-border" />
+            </div>
+          ))}
+        </div>
+
+        <div className="w-full max-w-sm card p-6">
+          <div className="h-2.5 w-24 bg-border mb-5" />
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="flex gap-4 py-2">
+              <div className="h-2.5 w-5 bg-border shrink-0 mt-0.5" />
+              <div className="h-3 flex-1 bg-border" />
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 interface InternData {
   id: number;
   temp_emp_number: string;
@@ -63,23 +102,7 @@ export default function IDCardPage({ params }: { params: { id: string } }) {
       </nav>
 
       <div className="pt-28 pb-24 px-6 md:px-10">
-        {loading && (
-          <div className="flex flex-col items-center justify-center min-h-[50vh] gap-4">
-            <div className="flex items-center gap-1.5">
-              {[0, 1, 2].map((i) => (
-                <motion.div
-                  key={i}
-                  className="w-2 h-2 bg-ink rounded-full"
-                  animate={{ opacity: [0.3, 1, 0.3] }}
-                  transition={{ duration: 0.9, repeat: Infinity, delay: i * 0.2 }}
-                />
-              ))}
-            </div>
-            <p className="font-mono text-[10px] tracking-widest uppercase text-ink-3">
-              Loading your ID card…
-            </p>
-          </div>
-        )}
+        {loading && <IDCardSkeleton />}
 
         {error && (
           <div className="flex flex-col items-center justify-center min-h-[50vh] gap-6 text-center">
