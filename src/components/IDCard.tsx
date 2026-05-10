@@ -208,26 +208,6 @@ export default function IDCard({ intern }: Props) {
         </div>
       </motion.div>
 
-      {/* Download button */}
-      <motion.button
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.4 }}
-        onClick={handleDownload}
-        disabled={downloading}
-        className="btn-primary flex items-center gap-2 min-w-[180px] justify-center"
-      >
-        {downloading ? (
-          <>
-            <span className="animate-pulse">Generating…</span>
-          </>
-        ) : (
-          <>
-            ↓ Download ID Card
-          </>
-        )}
-      </motion.button>
-
       {/* Details card */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}
