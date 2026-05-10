@@ -35,14 +35,49 @@ export default function IDCard({ intern }: Props) {
   const handleDownload = useCallback(async () => {
     if (!cardRef.current) return;
     setDownloading(true);
+    let clone: HTMLElement | null = null;
     try {
+      const cardEl = cardRef.current;
+      const cardWidth = cardEl.offsetWidth;
+      const cardHeight = cardEl.offsetHeight;
+
+      // Clone off-screen with explicit pixel dimensions so h-full/flex-1 resolve correctly.
+      // aspect-ratio alone isn't enough for html2canvas to compute child heights.
+      clone = cardEl.cloneNode(true) as HTMLElement;
+      clone.style.position = 'fixed';
+      clone.style.top = '-9999px';
+      clone.style.left = '-9999px';
+      clone.style.width = `${cardWidth}px`;
+      clone.style.height = `${cardHeight}px`;
+      clone.style.aspectRatio = 'auto';
+      document.body.appendChild(clone);
+
+      // Replace photo with proxied data URL to avoid CORS in canvas
+      const cloneImg = clone.querySelector('img');
+      if (cloneImg && intern.photo_url) {
+        const proxyRes = await fetch(`/api/proxy-image?url=${encodeURIComponent(intern.photo_url)}`);
+        const blob = await proxyRes.blob();
+        const dataUrl = await new Promise<string>((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result as string);
+          reader.readAsDataURL(blob);
+        });
+        await new Promise<void>((resolve) => {
+          cloneImg.onload = () => resolve();
+          cloneImg.src = dataUrl;
+        });
+      }
+
       const html2canvas = (await import('html2canvas')).default;
-      const canvas = await html2canvas(cardRef.current, {
+      const canvas = await html2canvas(clone, {
         scale: 3,
         useCORS: true,
         backgroundColor: '#000000',
         logging: false,
+        width: cardWidth,
+        height: cardHeight,
       });
+
       const link = document.createElement('a');
       link.download = `${intern.temp_emp_number}-ID-Card.png`;
       link.href = canvas.toDataURL('image/png', 1.0);
@@ -51,9 +86,10 @@ export default function IDCard({ intern }: Props) {
     } catch {
       toast.error('Download failed. Try right-clicking to save the image.');
     } finally {
+      if (clone) document.body.removeChild(clone);
       setDownloading(false);
     }
-  }, [intern.temp_emp_number]);
+  }, [intern.temp_emp_number, intern.photo_url]);
 
   const validUntil = () => {
     const d = new Date(intern.created_at);
