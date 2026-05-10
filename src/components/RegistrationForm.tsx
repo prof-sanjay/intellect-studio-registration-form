@@ -495,7 +495,7 @@ export default function RegistrationForm() {
                       options={COURSES}
                       value={watched.course}
                       onChange={(v) => setValue('course', v, { shouldValidate: true })}
-                      placeholder="e.g. B.Tech CSE"
+                      placeholder="e.g. B. Tech"
                       error={fieldErr('course')}
                     />
                   </div>
