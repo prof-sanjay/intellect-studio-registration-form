@@ -137,29 +137,34 @@ function FileUpload({
   error?: string;
 }) {
   const [uploading, setUploading] = useState(false);
+  const [uploadDone, setUploadDone] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleFile = useCallback(async (file: File) => {
     if (!file) return;
+    // Start preview generation for photos (non-blocking)
     if (type === 'photo' && file.type.startsWith('image/')) {
       const reader = new FileReader();
       reader.onload = (e) => setPreview(e.target?.result as string);
       reader.readAsDataURL(file);
     }
     setUploading(true);
+    setUploadDone(false);
     try {
       const fd = new FormData();
       fd.append('file', file);
       fd.append('type', type);
       const res = await fetch('/api/upload', { method: 'POST', body: fd });
       if (!res.ok) {
-        const { error } = await res.json();
-        toast.error(error || 'Upload failed');
+        const data = await res.json();
+        toast.error(data.error || 'Upload failed');
+        setUploading(false);
         return;
       }
       const { url } = await res.json();
       onUploaded(url);
+      setUploadDone(true);
       toast.success(`${label} uploaded`);
     } catch {
       toast.error('Upload failed. Please try again.');
@@ -194,34 +199,30 @@ function FileUpload({
           onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); }}
         />
 
-        {type === 'photo' && preview ? (
+        {uploading ? (
+          <div className="flex flex-col items-center gap-2">
+            <LoadingDots />
+            <p className="text-xs text-ink-3 font-sans">Uploading…</p>
+          </div>
+        ) : type === 'photo' && (preview || value) ? (
           <div className="flex flex-col items-center gap-3">
             <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-ink">
-              <img src={preview} alt="preview" className="w-full h-full object-cover" />
+              <img src={preview || value} alt="preview" className="w-full h-full object-cover" />
             </div>
             <p className="text-xs text-ink-2 font-sans">Photo ready ✓ — click to change</p>
           </div>
-        ) : value && type === 'resume' ? (
+        ) : type === 'resume' && (uploadDone || value) ? (
           <div className="flex flex-col items-center gap-2">
             <span className="text-2xl">📄</span>
             <p className="text-xs text-ink-2 font-sans">Resume uploaded ✓ — click to change</p>
           </div>
         ) : (
           <div className="flex flex-col items-center gap-2">
-            {uploading ? (
-              <>
-                <LoadingDots />
-                <p className="text-xs text-ink-3 font-sans">Uploading…</p>
-              </>
-            ) : (
-              <>
-                <span className="text-2xl opacity-30">{type === 'photo' ? '🧑' : '📄'}</span>
-                <p className="text-sm font-sans text-ink-2">
-                  Drop {label.toLowerCase()} here or <span className="underline">browse</span>
-                </p>
-                <p className="text-[11px] text-ink-3 font-mono">{hint}</p>
-              </>
-            )}
+            <span className="text-2xl opacity-30">{type === 'photo' ? '🧑' : '📄'}</span>
+            <p className="text-sm font-sans text-ink-2">
+              Drop {label.toLowerCase()} here or <span className="underline">browse</span>
+            </p>
+            <p className="text-[11px] text-ink-3 font-mono">{hint}</p>
           </div>
         )}
       </div>

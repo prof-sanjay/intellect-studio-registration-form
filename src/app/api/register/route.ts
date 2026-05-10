@@ -35,14 +35,17 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    let tempEmpNumber = generateTempEmpNumber();
-    for (let i = 0; i < 10; i++) {
-      const check = await withRetry(() =>
-        sql`SELECT id FROM interns WHERE temp_emp_number = ${tempEmpNumber}`
-      );
-      if (check.length === 0) break;
-      tempEmpNumber = generateTempEmpNumber();
+    // Get next sequential number (start at 45)
+    const lastRow = await withRetry(() =>
+      sql`SELECT temp_emp_number FROM interns WHERE temp_emp_number LIKE 'IS260%' ORDER BY temp_emp_number DESC LIMIT 1`
+    );
+    let nextSeq = 45;
+    if (lastRow.length > 0) {
+      const last = lastRow[0].temp_emp_number as string;
+      const num = parseInt(last.replace('IS260', ''), 10);
+      if (!isNaN(num)) nextSeq = num + 1;
     }
+    const tempEmpNumber = generateTempEmpNumber(nextSeq);
 
     const result = await withRetry(() =>
       sql`

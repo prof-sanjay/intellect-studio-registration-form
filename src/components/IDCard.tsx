@@ -98,7 +98,7 @@ export default function IDCard({ intern }: Props) {
                   Intellect Studio
                 </p>
                 <p className="font-mono text-[6px] tracking-[0.2em] uppercase text-white/40 mt-0.5">
-                  Internship Pass · 2024
+                  Internship Pass · {new Date(intern.created_at).getFullYear()}
                 </p>
               </div>
               <div className="border border-white/20 px-1.5 py-0.5">

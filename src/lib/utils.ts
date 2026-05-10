@@ -5,10 +5,8 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function generateTempEmpNumber(): string {
-  const year = new Date().getFullYear();
-  const random = Math.floor(1000 + Math.random() * 9000);
-  return `IS-${year}-${random}`;
+export function generateTempEmpNumber(seq: number): string {
+  return `IS260${seq.toString().padStart(2, '0')}`;
 }
 
 export function formatDate(dateStr: string): string {
