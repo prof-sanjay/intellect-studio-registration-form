@@ -8,7 +8,12 @@ export function getDB() {
       'Get your connection string from: https://console.neon.tech'
     );
   }
-  return neon(process.env.DATABASE_URL);
+  // Neon's driver issues its queries via `fetch()` under the hood, and
+  // Next.js's App Router patches the global `fetch` to cache responses by
+  // default. Without opting out here, admin actions (approve/reject/edit/
+  // delete) can write successfully but subsequent reads on the same route
+  // silently serve a cached pre-mutation snapshot instead of the fresh row.
+  return neon(process.env.DATABASE_URL, { fetchOptions: { cache: 'no-store' } });
 }
 
 export async function withRetry<T>(
@@ -52,6 +57,20 @@ export async function initDB() {
         portfolio_link TEXT,
         created_at TIMESTAMPTZ DEFAULT NOW(),
         status VARCHAR(20) DEFAULT 'pending'
+      )
+    `
+  );
+}
+
+export async function initAdminDB() {
+  const sql = getDB();
+  await withRetry(() =>
+    sql`
+      CREATE TABLE IF NOT EXISTS admins (
+        id SERIAL PRIMARY KEY,
+        username VARCHAR(50) UNIQUE NOT NULL,
+        password_hash TEXT NOT NULL,
+        created_at TIMESTAMPTZ DEFAULT NOW()
       )
     `
   );

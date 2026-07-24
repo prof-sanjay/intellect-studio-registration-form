@@ -50,9 +50,12 @@ export default function RegisterPage() {
             ← Intellect Studio
           </span>
         </Link>
-        <span className="font-mono text-[10px] text-ink-3 tracking-widest uppercase hidden md:block">
-          Internship Application
-        </span>
+        <Link
+          href="/id-card"
+          className="font-mono text-[10px] text-ink-3 tracking-widest uppercase hidden md:block hover:text-ink transition-colors"
+        >
+          Already Applied? Find My ID Card
+        </Link>
       </nav>
 
       <div className="pt-28 pb-24 px-6 md:px-10">

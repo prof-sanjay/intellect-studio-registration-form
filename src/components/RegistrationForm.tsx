@@ -659,7 +659,17 @@ export default function RegistrationForm() {
               <span className="inline-block transition-transform group-hover:translate-x-0.5">→</span>
             </button>
           ) : (
-            <button type="submit" disabled={submitting} className="btn-primary min-w-[160px] flex items-center justify-center gap-3">
+            // Deliberately type="button" + explicit handleSubmit(), not type="submit": when this
+            // button occupies the same slot the "Continue" button just did, React reuses the DOM
+            // node across the re-render. If it were type="submit", the click that triggered the
+            // step change would complete its native default action on that now-mutated node and
+            // submit the form immediately — before the user ever saw or clicked "Submit".
+            <button
+              type="button"
+              onClick={handleSubmit(onSubmit)}
+              disabled={submitting}
+              className="btn-primary min-w-[160px] flex items-center justify-center gap-3"
+            >
               {submitting ? <><LoadingDots /><span>Submitting…</span></> : 'Submit Application →'}
             </button>
           )}

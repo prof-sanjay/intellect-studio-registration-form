@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import { toast } from 'sonner';
 import IDCard from '@/components/IDCard';
 
 function IDCardSkeleton() {
@@ -67,6 +68,7 @@ export default function IDCardPage({ params }: { params: { id: string } }) {
   const [intern, setIntern] = useState<InternData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -89,6 +91,28 @@ export default function IDCardPage({ params }: { params: { id: string } }) {
     load();
     return () => { cancelled = true; };
   }, [params.id]);
+
+  // Manual refresh so applicants can see status changes (e.g. approved/rejected
+  // by an admin) without a full page reload — the fetch above only runs once on mount.
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    try {
+      const res = await fetch(`/api/intern/${params.id}`);
+      if (!res.ok) {
+        const d = await res.json();
+        toast.error(d.error || 'Failed to refresh.');
+        return;
+      }
+      const data = await res.json();
+      setIntern(data);
+      setError(null);
+      toast.success('Status updated.');
+    } catch {
+      toast.error('Failed to refresh. Please try again.');
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
   return (
     <main className="min-h-screen bg-bg">
@@ -149,6 +173,17 @@ export default function IDCardPage({ params }: { params: { id: string } }) {
             </div>
 
             <IDCard intern={intern} />
+
+            <div className="mt-6 flex justify-center">
+              <button
+                onClick={handleRefresh}
+                disabled={refreshing}
+                className="btn-secondary text-xs px-4 py-2.5 flex items-center gap-2 disabled:opacity-60"
+              >
+                <span className={refreshing ? 'inline-block animate-spin' : 'inline-block'}>⟳</span>
+                {refreshing ? 'Refreshing…' : 'Refresh Status'}
+              </button>
+            </div>
 
             {/* Next steps */}
             <motion.div

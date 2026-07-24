@@ -22,8 +22,11 @@ export async function GET(
     );
     if (rows.length === 0) return NextResponse.json({ error: 'Not found' }, { status: 404 });
 
+    // No caching: status (pending/approved/rejected) can change at any time via
+    // the admin portal, and the applicant should see that change immediately
+    // the next time they load this page, not up to 5 minutes later.
     return NextResponse.json(rows[0], {
-      headers: { 'Cache-Control': 'private, max-age=300' },
+      headers: { 'Cache-Control': 'no-store' },
     });
   } catch (err) {
     console.error('[intern/id] Error:', err);

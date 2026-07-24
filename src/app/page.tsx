@@ -105,13 +105,20 @@ export default function Home() {
                 <span className="inline-block transition-transform duration-200 group-hover:translate-x-1">→</span>
               </button>
             </Link>
-            <div className="flex items-center gap-2 text-ink-3">
-              <span className="font-mono text-[10px] tracking-widest">~5 MIN</span>
-              <span className="text-ink-4">·</span>
-              <span className="font-mono text-[10px] tracking-widest">FREE</span>
-              <span className="text-ink-4">·</span>
-              <span className="font-mono text-[10px] tracking-widest">INSTANT ID</span>
-            </div>
+            <Link href="/id-card">
+              <button className="btn-secondary group flex items-center gap-3">
+                Already Applied? Find My ID Card
+                <span className="inline-block transition-transform duration-200 group-hover:translate-x-1">→</span>
+              </button>
+            </Link>
+          </motion.div>
+
+          <motion.div variants={item} className="mt-6 flex items-center gap-2 text-ink-3">
+            <span className="font-mono text-[10px] tracking-widest">~5 MIN</span>
+            <span className="text-ink-4">·</span>
+            <span className="font-mono text-[10px] tracking-widest">FREE</span>
+            <span className="text-ink-4">·</span>
+            <span className="font-mono text-[10px] tracking-widest">INSTANT ID</span>
           </motion.div>
         </motion.div>
       </section>
