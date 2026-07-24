@@ -35,7 +35,7 @@ export default function EmployeeLookup() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="w-full max-w-sm">
+    <form onSubmit={handleSubmit} className="w-full">
       <label className="label-upper">Employee Number</label>
       <input
         value={empNo}
