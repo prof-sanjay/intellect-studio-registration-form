@@ -9,6 +9,26 @@ export function generateTempEmpNumber(seq: number): string {
   return `IS260${seq.toString().padStart(2, '0')}`;
 }
 
+// Format: IS (Intellect Studio) + first 2 letters of the workshop title +
+// event date as DDMMYY + a per-workshop sequence number.
+// `eventDateStr` must be a plain 'YYYY-MM-DD' string (not a Date/ISO-with-time
+// value) — parsing it as a Date and reading it back risks a local-timezone
+// shift landing on the wrong calendar day.
+export function generateWorkshopStudentId(title: string, eventDateStr: string, seq: number): string {
+  const letters = (title.trim().slice(0, 2).toUpperCase() || 'WS').padEnd(2, 'X');
+  const [yyyy, mm, dd] = eventDateStr.slice(0, 10).split('-');
+  return `IS${letters}${dd}${mm}${yyyy.slice(2)}${String(seq).padStart(2, '0')}`;
+}
+
+export function slugify(input: string): string {
+  return input
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 200);
+}
+
 export function formatDate(dateStr: string): string {
   const date = new Date(dateStr);
   return date.toLocaleDateString('en-IN', {

@@ -7,115 +7,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import Link from 'next/link';
 import { internSchema, InternFormData, STEP_FIELDS } from '@/lib/validations';
 import { cn, DEPARTMENTS, COURSES, COLLEGES, YEARS } from '@/lib/utils';
-
-// ─── Combobox ───────────────────────────────────────────────────────────────
-
-function Combobox({
-  options,
-  value,
-  onChange,
-  placeholder,
-  error,
-  disabled,
-}: {
-  options: string[];
-  value: string;
-  onChange: (v: string) => void;
-  placeholder?: string;
-  error?: string;
-  disabled?: boolean;
-}) {
-  const [open, setOpen] = useState(false);
-  const [query, setQuery] = useState(value || '');
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  const filtered = query.length > 0
-    ? options.filter((o) => o.toLowerCase().includes(query.toLowerCase()))
-    : options;
-
-  const handleSelect = (opt: string) => {
-    setQuery(opt);
-    onChange(opt);
-    setOpen(false);
-  };
-
-  return (
-    <div ref={containerRef} className="relative">
-      <input
-        className={cn('input-base', error && 'input-error')}
-        value={query}
-        onChange={(e) => { setQuery(e.target.value); onChange(e.target.value); setOpen(true); }}
-        onFocus={() => setOpen(true)}
-        onBlur={() => setTimeout(() => setOpen(false), 150)}
-        placeholder={placeholder}
-        disabled={disabled}
-        autoComplete="off"
-      />
-      <AnimatePresence>
-        {open && filtered.length > 0 && (
-          <motion.ul
-            initial={{ opacity: 0, y: -6 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -6 }}
-            transition={{ duration: 0.15 }}
-            className="absolute z-50 top-full left-0 right-0 bg-white border border-border shadow-lg max-h-48 overflow-y-auto"
-          >
-            {filtered.slice(0, 10).map((opt) => (
-              <li
-                key={opt}
-                onMouseDown={() => handleSelect(opt)}
-                className={cn(
-                  'px-4 py-2.5 text-sm cursor-pointer hover:bg-bg transition-colors font-sans',
-                  opt === value && 'bg-ink text-white hover:bg-ink'
-                )}
-              >
-                {opt}
-              </li>
-            ))}
-          </motion.ul>
-        )}
-      </AnimatePresence>
-      {error && <p className="error-text">{error}</p>}
-    </div>
-  );
-}
-
-// ─── Select ─────────────────────────────────────────────────────────────────
-
-function SelectField({
-  options,
-  value,
-  onChange,
-  placeholder,
-  error,
-  disabled,
-}: {
-  options: string[];
-  value: string;
-  onChange: (v: string) => void;
-  placeholder?: string;
-  error?: string;
-  disabled?: boolean;
-}) {
-  return (
-    <div>
-      <select
-        className={cn('input-base', error && 'input-error', 'cursor-pointer')}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        disabled={disabled}
-      >
-        <option value="">{placeholder || 'Select…'}</option>
-        {options.map((o) => (
-          <option key={o} value={o}>{o}</option>
-        ))}
-      </select>
-      {error && <p className="error-text">{error}</p>}
-    </div>
-  );
-}
+import { Combobox, SelectField } from '@/components/FormFields';
 
 // ─── File Upload ─────────────────────────────────────────────────────────────
 
@@ -643,7 +538,7 @@ export default function RegistrationForm() {
         </AnimatePresence>
 
         {/* Navigation */}
-        <div className="mt-8 flex items-center justify-between">
+        <div className="mt-8 flex flex-wrap items-center justify-between gap-3">
           <button
             type="button"
             onClick={goBack}
@@ -653,26 +548,34 @@ export default function RegistrationForm() {
             ← Back
           </button>
 
-          {step < 4 ? (
-            <button type="button" onClick={goNext} className="btn-primary group flex items-center gap-2">
-              Continue
-              <span className="inline-block transition-transform group-hover:translate-x-0.5">→</span>
-            </button>
-          ) : (
-            // Deliberately type="button" + explicit handleSubmit(), not type="submit": when this
-            // button occupies the same slot the "Continue" button just did, React reuses the DOM
-            // node across the re-render. If it were type="submit", the click that triggered the
-            // step change would complete its native default action on that now-mutated node and
-            // submit the form immediately — before the user ever saw or clicked "Submit".
-            <button
-              type="button"
-              onClick={handleSubmit(onSubmit)}
-              disabled={submitting}
-              className="btn-primary min-w-[160px] flex items-center justify-center gap-3"
-            >
-              {submitting ? <><LoadingDots /><span>Submitting…</span></> : 'Submit Application →'}
-            </button>
-          )}
+          <div className="flex flex-wrap items-center justify-end gap-3">
+            <Link href="/id-card">
+              <button type="button" className="btn-secondary text-xs whitespace-nowrap">
+                Already Applied? Find My ID Card
+              </button>
+            </Link>
+
+            {step < 4 ? (
+              <button type="button" onClick={goNext} className="btn-primary group flex items-center gap-2">
+                Continue
+                <span className="inline-block transition-transform group-hover:translate-x-0.5">→</span>
+              </button>
+            ) : (
+              // Deliberately type="button" + explicit handleSubmit(), not type="submit": when this
+              // button occupies the same slot the "Continue" button just did, React reuses the DOM
+              // node across the re-render. If it were type="submit", the click that triggered the
+              // step change would complete its native default action on that now-mutated node and
+              // submit the form immediately — before the user ever saw or clicked "Submit".
+              <button
+                type="button"
+                onClick={handleSubmit(onSubmit)}
+                disabled={submitting}
+                className="btn-primary min-w-[160px] flex items-center justify-center gap-3"
+              >
+                {submitting ? <><LoadingDots /><span>Submitting…</span></> : 'Submit Application →'}
+              </button>
+            )}
+          </div>
         </div>
       </form>
     </div>

@@ -7,7 +7,8 @@ import LogoutButton from './LogoutButton';
 
 const NAV_LINKS = [
   { href: '/admin', label: 'Dashboard' },
-  { href: '/admin/registrations', label: 'Registrations' },
+  { href: '/admin/registrations', label: 'Internship Registrations' },
+  { href: '/admin/workshops', label: 'Workshops' },
 ];
 
 export default function Sidebar({ username }: { username: string }) {
@@ -25,7 +26,7 @@ export default function Sidebar({ username }: { username: string }) {
 
         <nav className="space-y-1">
           {NAV_LINKS.map((link) => {
-            const active = pathname === link.href;
+            const active = link.href === '/admin' ? pathname === link.href : pathname?.startsWith(link.href);
             return (
               <Link
                 key={link.href}

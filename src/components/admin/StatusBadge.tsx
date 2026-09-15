@@ -4,6 +4,9 @@ const STYLES: Record<string, string> = {
   pending: 'text-ink-2 border-ink-3/40 bg-ink-3/5',
   approved: 'text-success border-success/30 bg-success/5',
   rejected: 'text-error border-error/30 bg-error/5',
+  draft: 'text-ink-2 border-ink-3/40 bg-ink-3/5',
+  published: 'text-success border-success/30 bg-success/5',
+  closed: 'text-error border-error/30 bg-error/5',
 };
 
 export default function StatusBadge({ status }: { status: string }) {

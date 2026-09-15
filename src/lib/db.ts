@@ -75,3 +75,59 @@ export async function initAdminDB() {
     `
   );
 }
+
+export async function initWorkshopDB() {
+  const sql = getDB();
+  await withRetry(() =>
+    sql`
+      CREATE TABLE IF NOT EXISTS workshops (
+        id SERIAL PRIMARY KEY,
+        slug VARCHAR(220) UNIQUE NOT NULL,
+        title VARCHAR(200) NOT NULL,
+        description TEXT,
+        venue VARCHAR(200) NOT NULL,
+        event_date DATE NOT NULL,
+        banner_url TEXT,
+        status VARCHAR(20) DEFAULT 'published',
+        created_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `
+  );
+  // Drop columns from an earlier schema revision — fee, capacity, and explicit
+  // start/end times were removed as unneeded for how workshops are actually run.
+  await withRetry(() =>
+    sql`
+      ALTER TABLE workshops
+        DROP COLUMN IF EXISTS start_time,
+        DROP COLUMN IF EXISTS end_time,
+        DROP COLUMN IF EXISTS capacity,
+        DROP COLUMN IF EXISTS fee
+    `
+  );
+  await withRetry(() =>
+    sql`
+      CREATE TABLE IF NOT EXISTS workshop_registrations (
+        id SERIAL PRIMARY KEY,
+        workshop_id INTEGER NOT NULL REFERENCES workshops(id) ON DELETE CASCADE,
+        pass_code VARCHAR(30) UNIQUE NOT NULL,
+        full_name VARCHAR(100) NOT NULL,
+        email VARCHAR(200) NOT NULL,
+        phone VARCHAR(20) NOT NULL,
+        year VARCHAR(20) NOT NULL,
+        course VARCHAR(200) NOT NULL,
+        department VARCHAR(100),
+        status VARCHAR(20) DEFAULT 'pending',
+        checked_in_at TIMESTAMPTZ,
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        UNIQUE(workshop_id, email)
+      )
+    `
+  );
+  // Registrations used to be auto-confirmed; the QR pass now certifies admin
+  // approval, so every registration starts pending review instead.
+  await withRetry(() => sql`ALTER TABLE workshop_registrations ALTER COLUMN status SET DEFAULT 'pending'`);
+  await withRetry(() => sql`UPDATE workshop_registrations SET status = 'pending' WHERE status = 'confirmed'`);
+  await withRetry(() => sql`UPDATE workshop_registrations SET status = 'rejected' WHERE status = 'cancelled'`);
+  // College/university was dropped from the registration form — no longer collected.
+  await withRetry(() => sql`ALTER TABLE workshop_registrations DROP COLUMN IF EXISTS college`);
+}
