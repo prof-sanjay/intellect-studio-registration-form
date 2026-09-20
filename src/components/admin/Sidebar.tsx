@@ -9,6 +9,7 @@ const NAV_LINKS = [
   { href: '/admin', label: 'Dashboard' },
   { href: '/admin/registrations', label: 'Internship Registrations' },
   { href: '/admin/workshops', label: 'Workshops' },
+  { href: '/admin/feedback', label: 'Workshop Feedback' },
 ];
 
 export default function Sidebar({ username }: { username: string }) {

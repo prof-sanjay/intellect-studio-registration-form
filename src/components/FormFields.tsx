@@ -74,6 +74,87 @@ export function Combobox({
   );
 }
 
+export function RatingScale({
+  value,
+  onChange,
+  labels,
+  error,
+}: {
+  value: number | undefined;
+  onChange: (v: number) => void;
+  labels: [string, string, string, string, string];
+  error?: string;
+}) {
+  return (
+    <div>
+      <div className="flex items-start justify-between gap-1">
+        {[1, 2, 3, 4, 5].map((n) => (
+          <button
+            key={n}
+            type="button"
+            onClick={() => onChange(n)}
+            className="flex flex-1 flex-col items-center gap-1.5 py-1"
+          >
+            <span
+              className={cn(
+                'flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full border font-syne font-bold text-xs sm:text-sm transition-all duration-150',
+                value === n
+                  ? 'border-ink bg-ink text-white'
+                  : 'border-border bg-white text-ink hover:border-ink-3'
+              )}
+            >
+              {n}
+            </span>
+            <span
+              className={cn(
+                'font-mono text-[7px] sm:text-[8px] tracking-wide uppercase text-center leading-tight',
+                value === n ? 'text-ink' : 'text-ink-3'
+              )}
+            >
+              {labels[n - 1]}
+            </span>
+          </button>
+        ))}
+      </div>
+      {error && <p className="error-text">{error}</p>}
+    </div>
+  );
+}
+
+export function OptionChip({
+  label,
+  checked,
+  onChange,
+  type = 'checkbox',
+  name,
+}: {
+  label: string;
+  checked: boolean;
+  onChange: () => void;
+  type?: 'checkbox' | 'radio';
+  name?: string;
+}) {
+  return (
+    <label
+      className={cn(
+        'flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs cursor-pointer transition-colors',
+        checked ? 'border-ink text-ink bg-ink/5' : 'border-border text-ink-2 bg-white hover:border-ink-3'
+      )}
+    >
+      <span
+        className={cn(
+          'flex items-center justify-center w-3.5 h-3.5 rounded-full border shrink-0 transition-colors',
+          checked ? 'border-ink bg-ink' : 'border-ink-3 bg-white'
+        )}
+      >
+        {checked && <span className="w-1.5 h-1.5 rounded-full bg-white" />}
+      </span>
+      <span className="font-sans">{label}</span>
+      <input type={type} name={name} checked={checked} onChange={onChange} className="sr-only" />
+    </label>
+  );
+}
+
 export function SelectField({
   options,
   value,

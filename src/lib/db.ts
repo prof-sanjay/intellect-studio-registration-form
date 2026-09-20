@@ -131,3 +131,29 @@ export async function initWorkshopDB() {
   // College/university was dropped from the registration form — no longer collected.
   await withRetry(() => sql`ALTER TABLE workshop_registrations DROP COLUMN IF EXISTS college`);
 }
+
+// Depends on the `workshops` table (FK) — callers must run initWorkshopDB() first.
+export async function initWorkshopFeedbackDB() {
+  const sql = getDB();
+  await withRetry(() =>
+    sql`
+      CREATE TABLE IF NOT EXISTS workshop_feedback (
+        id SERIAL PRIMARY KEY,
+        workshop_id INTEGER NOT NULL REFERENCES workshops(id) ON DELETE CASCADE,
+        name VARCHAR(100) NOT NULL,
+        register_number VARCHAR(50) NOT NULL,
+        overall_rating SMALLINT NOT NULL,
+        content_relevance SMALLINT NOT NULL,
+        concept_clarity SMALLINT NOT NULL,
+        hands_on_rating SMALLINT NOT NULL,
+        trainer_rating SMALLINT NOT NULL,
+        future_topics TEXT[] NOT NULL DEFAULT '{}',
+        other_topic VARCHAR(200),
+        recommendation VARCHAR(20) NOT NULL,
+        improvement_suggestions TEXT,
+        submitted_at TIMESTAMPTZ DEFAULT NOW(),
+        UNIQUE(workshop_id, register_number)
+      )
+    `
+  );
+}
