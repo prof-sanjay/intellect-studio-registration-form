@@ -119,6 +119,12 @@ export async function getWorkshopFeedbackById(id: number) {
   return rows[0] || null;
 }
 
+export async function deleteWorkshopFeedback(id: number) {
+  const sql = getDB();
+  const rows = await withRetry(() => sql`DELETE FROM workshop_feedback WHERE id = ${id} RETURNING id`);
+  return rows[0] || null;
+}
+
 export async function getFeedbackStats(workshopId?: string): Promise<FeedbackStats> {
   const sql = getDB();
   const filterId = workshopId && workshopId !== 'all' ? parseInt(workshopId, 10) : null;

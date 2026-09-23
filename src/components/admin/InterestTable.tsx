@@ -1,33 +1,28 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
 import { formatDateShort } from '@/lib/utils';
-import type { WorkshopFeedbackWithEvent } from '@/lib/workshop-feedback-types';
+import type { WorkshopInterest } from '@/lib/workshop-interest-types';
 
 const COLUMNS: { key: string; label: string; sortable: boolean }[] = [
   { key: 'name', label: 'Name', sortable: true },
-  { key: 'register_number', label: 'Register Number', sortable: true },
-  { key: 'overall_rating', label: 'Overall Rating', sortable: true },
-  { key: 'trainer_rating', label: 'Trainer Rating', sortable: true },
-  { key: 'recommendation', label: 'Recommendation', sortable: false },
+  { key: 'roll_number', label: 'Roll Number', sortable: true },
+  { key: 'college', label: 'College', sortable: true },
   { key: 'submitted_at', label: 'Submitted At', sortable: true },
 ];
 
-export default function FeedbackTable({
+export default function InterestTable({
   rows,
   total,
   page,
   pageSize,
-  showWorkshopColumn,
 }: {
-  rows: WorkshopFeedbackWithEvent[];
+  rows: WorkshopInterest[];
   total: number;
   page: number;
   pageSize: number;
-  showWorkshopColumn: boolean;
 }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -50,16 +45,16 @@ export default function FeedbackTable({
   };
 
   const handleDelete = async (id: number, name: string) => {
-    if (!window.confirm(`Delete the feedback response from ${name}? This cannot be undone.`)) return;
+    if (!window.confirm(`Delete the interest response from ${name}? This cannot be undone.`)) return;
     setPendingId(id);
     try {
-      const res = await fetch(`/api/admin/feedback/${id}`, { method: 'DELETE' });
+      const res = await fetch(`/api/admin/interest/${id}`, { method: 'DELETE' });
       if (!res.ok) {
         const d = await res.json();
         toast.error(d.error || 'Delete failed.');
         return;
       }
-      toast.success('Feedback deleted.');
+      toast.success('Response deleted.');
       router.refresh();
     } catch {
       toast.error('Something went wrong.');
@@ -68,19 +63,12 @@ export default function FeedbackTable({
     }
   };
 
-  const colSpan = COLUMNS.length + (showWorkshopColumn ? 1 : 0) + 1;
-
   return (
     <div className="card overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-border">
-              {showWorkshopColumn && (
-                <th className="text-left px-4 py-3 font-mono text-[10px] tracking-widest uppercase text-ink-3 whitespace-nowrap">
-                  Workshop
-                </th>
-              )}
               {COLUMNS.map((col) => (
                 <th
                   key={col.key}
@@ -93,47 +81,33 @@ export default function FeedbackTable({
                   {sortBy === col.key && (sortDir === 'asc' ? ' ↑' : ' ↓')}
                 </th>
               ))}
+              <th className="text-left px-4 py-3 font-mono text-[10px] tracking-widest uppercase text-ink-3">Interested</th>
               <th className="text-left px-4 py-3 font-mono text-[10px] tracking-widest uppercase text-ink-3">Actions</th>
             </tr>
           </thead>
           <tbody>
             {rows.length === 0 && (
               <tr>
-                <td colSpan={colSpan} className="px-4 py-10 text-center text-ink-3 text-sm">
-                  No feedback responses found.
+                <td colSpan={COLUMNS.length + 2} className="px-4 py-10 text-center text-ink-3 text-sm">
+                  No responses found.
                 </td>
               </tr>
             )}
             {rows.map((row) => (
-              <tr
-                key={row.id}
-                onClick={() => router.push(`/admin/feedback/${row.id}`)}
-                className="border-b border-border last:border-0 hover:bg-bg/60 cursor-pointer"
-              >
-                {showWorkshopColumn && (
-                  <td className="px-4 py-3 whitespace-nowrap text-ink-2">{row.workshop_title}</td>
-                )}
-                <td className="px-4 py-3 whitespace-nowrap">
-                  <Link
-                    href={`/admin/feedback/${row.id}`}
-                    className="font-semibold text-ink hover:underline"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    {row.name}
-                  </Link>
-                </td>
-                <td className="px-4 py-3 whitespace-nowrap font-mono text-xs text-ink-2">{row.register_number}</td>
-                <td className="px-4 py-3 whitespace-nowrap text-ink-2">{row.overall_rating} / 5</td>
-                <td className="px-4 py-3 whitespace-nowrap text-ink-2">{row.trainer_rating} / 5</td>
-                <td className="px-4 py-3 whitespace-nowrap text-ink-2">{row.recommendation}</td>
+              <tr key={row.id} className="border-b border-border last:border-0 hover:bg-bg/60">
+                <td className="px-4 py-3 whitespace-nowrap font-semibold text-ink">{row.name}</td>
+                <td className="px-4 py-3 whitespace-nowrap font-mono text-xs text-ink-2">{row.roll_number}</td>
+                <td className="px-4 py-3 whitespace-nowrap text-ink-2">{row.college}</td>
                 <td className="px-4 py-3 whitespace-nowrap text-ink-2">{formatDateShort(row.submitted_at)}</td>
+                <td className="px-4 py-3 whitespace-nowrap">
+                  <span className={row.interested ? 'text-success' : 'text-ink-3'}>
+                    {row.interested ? '✓ Yes' : 'No'}
+                  </span>
+                </td>
                 <td className="px-4 py-3 whitespace-nowrap">
                   <button
                     disabled={pendingId === row.id}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDelete(row.id, row.name);
-                    }}
+                    onClick={() => handleDelete(row.id, row.name)}
                     className="text-[11px] font-mono uppercase tracking-wide text-error hover:underline disabled:opacity-30"
                   >
                     Delete

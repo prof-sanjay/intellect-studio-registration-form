@@ -10,6 +10,7 @@ const NAV_LINKS = [
   { href: '/admin/registrations', label: 'Internship Registrations' },
   { href: '/admin/workshops', label: 'Workshops' },
   { href: '/admin/feedback', label: 'Workshop Feedback' },
+  { href: '/admin/interest', label: 'Workshop Interest' },
 ];
 
 export default function Sidebar({ username }: { username: string }) {

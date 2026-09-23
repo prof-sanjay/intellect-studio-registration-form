@@ -151,8 +151,31 @@ export async function initWorkshopFeedbackDB() {
         other_topic VARCHAR(200),
         recommendation VARCHAR(20) NOT NULL,
         improvement_suggestions TEXT,
-        submitted_at TIMESTAMPTZ DEFAULT NOW(),
-        UNIQUE(workshop_id, register_number)
+        submitted_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `
+  );
+  // A register number may only submit feedback once, full stop — replaces an
+  // earlier per-workshop UNIQUE(workshop_id, register_number) rule.
+  await withRetry(() =>
+    sql`ALTER TABLE workshop_feedback DROP CONSTRAINT IF EXISTS workshop_feedback_workshop_id_register_number_key`
+  );
+  await withRetry(() =>
+    sql`CREATE UNIQUE INDEX IF NOT EXISTS workshop_feedback_register_number_idx ON workshop_feedback (register_number)`
+  );
+}
+
+export async function initWorkshopInterestDB() {
+  const sql = getDB();
+  await withRetry(() =>
+    sql`
+      CREATE TABLE IF NOT EXISTS workshop_interest (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(100) NOT NULL,
+        roll_number VARCHAR(50) NOT NULL,
+        college VARCHAR(50) NOT NULL,
+        interested BOOLEAN NOT NULL,
+        submitted_at TIMESTAMPTZ DEFAULT NOW()
       )
     `
   );

@@ -1,3 +1,8 @@
+'use client';
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 import { formatDate } from '@/lib/utils';
 import type { WorkshopFeedbackWithEvent } from '@/lib/workshop-feedback-types';
 
@@ -11,6 +16,29 @@ function RatingRow({ label, value }: { label: string; value: number }) {
 }
 
 export default function FeedbackDetail({ feedback }: { feedback: WorkshopFeedbackWithEvent }) {
+  const router = useRouter();
+  const [busy, setBusy] = useState(false);
+
+  const handleDelete = async () => {
+    if (!window.confirm(`Delete the feedback response from ${feedback.name}? This cannot be undone.`)) return;
+    setBusy(true);
+    try {
+      const res = await fetch(`/api/admin/feedback/${feedback.id}`, { method: 'DELETE' });
+      if (!res.ok) {
+        const d = await res.json();
+        toast.error(d.error || 'Delete failed.');
+        return;
+      }
+      toast.success('Feedback deleted.');
+      router.push('/admin/feedback');
+      router.refresh();
+    } catch {
+      toast.error('Something went wrong.');
+    } finally {
+      setBusy(false);
+    }
+  };
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div className="lg:col-span-1 space-y-6">
@@ -22,7 +50,15 @@ export default function FeedbackDetail({ feedback }: { feedback: WorkshopFeedbac
           <p className="text-sm text-ink font-sans mb-4">{feedback.workshop_title}</p>
 
           <p className="font-mono text-[10px] tracking-widest uppercase text-ink-3 mb-1">Submitted On</p>
-          <p className="text-sm text-ink font-sans">{formatDate(feedback.submitted_at)}</p>
+          <p className="text-sm text-ink font-sans mb-4">{formatDate(feedback.submitted_at)}</p>
+
+          <button
+            disabled={busy}
+            onClick={handleDelete}
+            className="text-xs font-mono uppercase tracking-wide text-error hover:underline pt-2 disabled:opacity-30"
+          >
+            Delete Feedback
+          </button>
         </div>
       </div>
 

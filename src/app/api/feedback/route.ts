@@ -32,12 +32,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Workshop not found.' }, { status: 404 });
     }
 
-    // One feedback response per register number per workshop, enforced by a
-    // DB unique constraint — checked here first so we can return a clean 409
-    // instead of a raw constraint-violation error.
+    // One feedback response per register number, full stop — enforced by a DB
+    // unique index — checked here first so we can return a clean 409 instead
+    // of a raw constraint-violation error.
     const sql = getDB();
     const existing = await withRetry(() =>
-      sql`SELECT id FROM workshop_feedback WHERE workshop_id = ${data.workshopId} AND register_number = ${data.registerNumber}`
+      sql`SELECT id FROM workshop_feedback WHERE register_number = ${data.registerNumber}`
     );
     if (existing.length > 0) {
       return NextResponse.json(
