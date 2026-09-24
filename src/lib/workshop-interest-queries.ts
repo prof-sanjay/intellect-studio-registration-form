@@ -12,8 +12,8 @@ export async function createWorkshopInterest(data: WorkshopInterestData) {
   const sql = getDB();
   const rows = await withRetry(() =>
     sql`
-      INSERT INTO workshop_interest (name, roll_number, college, interested)
-      VALUES (${data.name}, ${data.rollNumber}, ${data.college}, ${data.interested})
+      INSERT INTO workshop_interest (name, roll_number, college, other_college, interested)
+      VALUES (${data.name}, ${data.rollNumber}, ${data.college}, ${data.otherCollege || null}, ${data.interested})
       RETURNING *
     `
   );
@@ -77,7 +77,8 @@ export async function getInterestStats(college?: string): Promise<InterestStats>
             COUNT(*) FILTER (WHERE interested = true)::int AS "interestedCount",
             COUNT(*) FILTER (WHERE interested = false)::int AS "notInterestedCount",
             COUNT(*) FILTER (WHERE college = 'NCERC')::int AS ncerc,
-            COUNT(*) FILTER (WHERE college = 'JCET')::int AS jcet
+            COUNT(*) FILTER (WHERE college = 'JCET')::int AS jcet,
+            COUNT(*) FILTER (WHERE college = 'Other')::int AS other
           FROM workshop_interest
           WHERE college = ${filterCollege}
         `
@@ -87,7 +88,8 @@ export async function getInterestStats(college?: string): Promise<InterestStats>
             COUNT(*) FILTER (WHERE interested = true)::int AS "interestedCount",
             COUNT(*) FILTER (WHERE interested = false)::int AS "notInterestedCount",
             COUNT(*) FILTER (WHERE college = 'NCERC')::int AS ncerc,
-            COUNT(*) FILTER (WHERE college = 'JCET')::int AS jcet
+            COUNT(*) FILTER (WHERE college = 'JCET')::int AS jcet,
+            COUNT(*) FILTER (WHERE college = 'Other')::int AS other
           FROM workshop_interest
         `
   );

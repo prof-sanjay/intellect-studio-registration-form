@@ -179,4 +179,6 @@ export async function initWorkshopInterestDB() {
       )
     `
   );
+  // Holds the free-text college name when college = 'Other'.
+  await withRetry(() => sql`ALTER TABLE workshop_interest ADD COLUMN IF NOT EXISTS other_college VARCHAR(200)`);
 }

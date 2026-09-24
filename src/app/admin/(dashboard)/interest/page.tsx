@@ -35,12 +35,13 @@ export default async function AdminInterestPage({
         <RefreshButton />
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
         <StatCard label="Total Responses" value={stats.total} />
         <StatCard label="Interested" value={stats.interestedCount} />
         <StatCard label="Not Interested" value={stats.notInterestedCount} />
         <StatCard label="NCERC" value={stats.ncerc} />
         <StatCard label="JCET" value={stats.jcet} />
+        <StatCard label="Other" value={stats.other} />
       </div>
 
       <InterestSearchFilterBar />

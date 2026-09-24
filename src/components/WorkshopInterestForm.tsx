@@ -29,6 +29,7 @@ export default function WorkshopInterestForm() {
       name: '',
       rollNumber: '',
       college: undefined,
+      otherCollege: '',
       interested: undefined,
     },
   });
@@ -98,6 +99,16 @@ export default function WorkshopInterestForm() {
           placeholder="Select your college"
           error={fieldErr('college')}
         />
+        {watched.college === 'Other' && (
+          <>
+            <input
+              {...register('otherCollege')}
+              className={cn('input-base mt-3', fieldErr('otherCollege') && 'input-error')}
+              placeholder="Enter your college name"
+            />
+            {fieldErr('otherCollege') && <p className="error-text">{fieldErr('otherCollege')}</p>}
+          </>
+        )}
       </div>
 
       <div>

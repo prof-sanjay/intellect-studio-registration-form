@@ -3,6 +3,7 @@ export interface WorkshopInterest {
   name: string;
   roll_number: string;
   college: string;
+  other_college: string | null;
   interested: boolean;
   submitted_at: string;
 }
@@ -27,4 +28,5 @@ export interface InterestStats {
   notInterestedCount: number;
   ncerc: number;
   jcet: number;
+  other: number;
 }

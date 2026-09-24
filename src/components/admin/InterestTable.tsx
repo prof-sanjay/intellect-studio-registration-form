@@ -97,7 +97,9 @@ export default function InterestTable({
               <tr key={row.id} className="border-b border-border last:border-0 hover:bg-bg/60">
                 <td className="px-4 py-3 whitespace-nowrap font-semibold text-ink">{row.name}</td>
                 <td className="px-4 py-3 whitespace-nowrap font-mono text-xs text-ink-2">{row.roll_number}</td>
-                <td className="px-4 py-3 whitespace-nowrap text-ink-2">{row.college}</td>
+                <td className="px-4 py-3 whitespace-nowrap text-ink-2">
+                  {row.college === 'Other' && row.other_college ? `Other (${row.other_college})` : row.college}
+                </td>
                 <td className="px-4 py-3 whitespace-nowrap text-ink-2">{formatDateShort(row.submitted_at)}</td>
                 <td className="px-4 py-3 whitespace-nowrap">
                   <span className={row.interested ? 'text-success' : 'text-ink-3'}>
